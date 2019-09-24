@@ -5,22 +5,18 @@ export class ListaAlunosController {
            this.model = model;
            this.view = view;
 
-           this.view.$seletor.addEventListener(
-             "click",
-             this.editarAluno.bind(this)
-           );
+           this.view.$seletor.addEventListener("click",this.editarAluno.bind(this));
 
            this.pegaLocalStorage();
          }
          pegaLocalStorage() {
            let local = localStorage.getItem("alunos");
-            console.log(local);
             
              if (local) {
                let alunos = JSON.parse(local);
                alunos.forEach((aluno, idx) => {
                  this.model.adicionarAluno(
-                   new Aluno(aluno.nome, aluno._notas, aluno._id)
+                   new Aluno(aluno.nome, aluno.notas)
                  );
                });
                this.view.atualiza(this.model);
@@ -31,8 +27,7 @@ export class ListaAlunosController {
             let _model = model.map(item => {
                 return {
                     nome: item.nome,
-                    notas: item._notas,
-                    _id: item._id
+                    notas: item._notas
                  }
              })
             _model = JSON.stringify(_model);
@@ -59,16 +54,14 @@ export class ListaAlunosController {
              let aluno = this.model.obterPorId(_id);
              aluno.atualizarNotas(_notas);
 
-               this.view.atualiza(this.model);
-            // localStorage.setItem("alunos", this.model.lista);
-            this.atualizarLocalStorage(this.model.lista);    
+             this.view.atualiza(this.model);
+             this.atualizarLocalStorage(this.model.lista);    
            }
          }
 
          adicionarAluno(nome, notas) {
-           this.model.adicionarAluno(new Aluno(nome, notas));
-             this.view.atualiza(this.model);
-            // localStorage.setItem("alunos", this.model.lista);
+            this.model.adicionarAluno(new Aluno(nome, notas));
+            this.view.atualiza(this.model);
             this.atualizarLocalStorage(this.model.lista);    
              
          }

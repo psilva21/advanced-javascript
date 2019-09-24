@@ -1,11 +1,10 @@
 import { blg } from "../../beluga2.js";
 
 export class Aluno {
-    constructor(nome, notas, id){
+    constructor(nome, notas){
         this.nome = nome;
         this._notas = (notas) ? [].concat(notas) : [];        
         this._id = ++Aluno.id;
-        // this.id = id;
     }
     
     adicionarNotas(){
@@ -16,7 +15,7 @@ export class Aluno {
         this._notas = [].concat(arr);
     }
     
-    recuperarMedia(){
+    recuperarMedia() {
         var notas = this._notas;
         return blg.calcularMedia(...notas);
     }
