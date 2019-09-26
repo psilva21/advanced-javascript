@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JSON Api</title>
+</head>
+<body>
+    <dl id="lista"></dl>
+    <script>
+          let xhr = new XMLHttpRequest();
+          const $lista = document.querySelector('#lista');
+          xhr.open('GET','https://jsonplaceholder.typicode.com/users/');
+
+          xhr.send();
+
+          xhr.onreadystatechange = function(e){
+              if(xhr.readyState){
+                  if(xhr.status === 200 || xhr.status === 304){
+                        let resp = JSON.parse(xhr.responseText);
+
+                        showUsers(resp);
+                  }
+              }
+          }
+
+          function showUsers(users){
+                let html = '';
+                users.forEach(user => { 
+                     html += `<dt>${user.name}</dt>
+                                <dd>${user.email}</dd>
+                                <dd>${user.phone}</dd>
+                                <dd>${user.website}</dd>`;
+                })
+                $lista.innerHTML = html;
+          }
+    </script>
+</body>
+</html>
