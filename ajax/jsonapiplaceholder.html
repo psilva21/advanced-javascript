@@ -16,8 +16,8 @@
           xhr.send();
 
           xhr.onreadystatechange = function(e){
-              if(xhr.readyState){
-                  if(xhr.status === 200 || xhr.status === 304){
+              if(xhr.readyState == 4){
+                  if(xhr.status === 200){
                         let resp = JSON.parse(xhr.responseText);
 
                         showUsers(resp);
@@ -26,14 +26,20 @@
           }
 
           function showUsers(users){
-                let html = '';
+                let fragmento = document.createDocumentFragment();
                 users.forEach(user => { 
-                     html += `<dt>${user.name}</dt>
-                                <dd>${user.email}</dd>
-                                <dd>${user.phone}</dd>
-                                <dd>${user.website}</dd>`;
-                })
-                $lista.innerHTML = html;
+                    createList(fragmento,'dt',user.name);
+                    createList(fragmento, 'dd', user.email,user.phone,user.website);
+                });
+                $lista.appendChild(fragmento);
+          }
+          function createList(fragmento, element, ...user){
+              user.forEach(str => {
+                  let el = document.createElement(element);
+                  let text = document.createTextNode(str);
+                  el.appendChild(text);
+                  fragmento.appendChild(el);
+              });
           }
     </script>
 </body>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JSON Api - Multiple Requests</title>
+</head>
+<body>
+    <dl id="lista"></dl>
+    <script>
+          let xhr = new XMLHttpRequest();
+          const $lista = document.querySelector('#lista');
+          
+
+         function getUser(id, callback){
+             let url = 'https://jsonplaceholder.typicode.com/users/'+id;
+            xhr.open('GET',url);
+
+            xhr.send(null);
+
+            xhr.onreadystatechange = function(e){
+              if(xhr.readyState === 4){
+                  if(xhr.status === 200 || xhr.status === 304){
+                        let resp = JSON.parse(xhr.responseText);
+                        
+                        if(callback && typeof callback === 'function')
+                            callback(resp);
+                  }
+              }
+          }
+         }
+          
+
+          function showUser(user){
+                createList($lista,'dt',user.id);
+                createList($lista, 'dd',user.name, user.email,user.phone,user.website);
+          }
+          function createList(container, element, ...user){
+              user.forEach(str => {
+                  let el = document.createElement(element);
+                  let text = document.createTextNode(str);
+                  el.appendChild(text);
+                  container.appendChild(el);
+              });
+          }
+          getUser(1, function(usuario){
+              showUser(usuario);
+              getUser(2, function(usuario){
+                  showUser(usuario);
+                  getUser(3, function(usuario){
+                      showUser(usuario);
+                      getUser(4, function(usuario){
+                          showUser(usuario);
+                      });
+                  })
+              })
+          });
+    </script>
+</body>
+</html>
