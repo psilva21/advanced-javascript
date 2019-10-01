@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JSON Api - Fetch</title>
+</head>
+<body>
+    <dl id="lista"></dl>
+    <script>
+
+        
+          let xhr = new XMLHttpRequest();
+          const $lista = document.querySelector('#lista');
+          
+
+         function getUser(id){
+                // let promise = new Promise((resolve, reject) =>{
+                let url = 'https://jsonplaceholder.typicode.com/users/'+id;
+                return fetch(url)
+                    .then(response =>{
+                        console.log('response',response);
+                        if(!response.ok)
+                           throw new Error('deu erro');
+                        return response;
+                    })
+                    .then(res => {
+                        return res.json();
+                    });
+                // xhr.open('GET',url);
+
+                // xhr.send(null);
+
+                // xhr.onreadystatechange = function(e){
+                //     if(xhr.readyState === 4){
+                //         let resp = null;
+                //         if(xhr.status === 200 || xhr.status === 304){
+                //                 resp = JSON.parse(xhr.responseText);            
+                //                 resolve(resp);
+                //         }else{
+                //             resp = JSON.parse(xhr.responseText);
+                //             reject(resp);
+                //         }
+                //     }
+                // } 
+            // })
+            // return promise;
+         }
+          
+
+          function showUser(user){
+                createList($lista,'dt',user.id);
+                createList($lista, 'dd',user.name, user.email,user.phone,user.website);
+          }
+          function createList(container, element, ...user){
+              user.forEach(str => {
+                  let el = document.createElement(element);
+                  let text = document.createTextNode(str);
+                  el.appendChild(text);
+                  container.appendChild(el);
+              });
+          }
+          getUser(1)
+            .then(response => {
+              console.log(response);
+              showUser(response);
+              return getUser(2);
+            })
+            .then(response => {
+              console.log(response);
+              showUser(response);
+              return getUser(3);
+            })
+            .then(response => {
+              console.log(response);
+              showUser(response);
+              return getUser(4);
+            })
+            .then(response => {
+              console.log(response);
+              showUser(response);
+            })
+            .catch(error => {
+              console.error('ERRO: ',error.message);
+          });
+    </script>
+</body>
+</html>
