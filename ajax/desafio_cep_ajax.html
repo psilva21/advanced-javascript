@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Desafio CEP</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        .centralized{
+            width: 50%;
+            margin: 50px auto;
+        }
+        .padding-hack{
+            padding: 0;
+        }
+        .disp-block{
+            clear: both;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <section class="container">
+        <div class="centralized">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Insira o cep">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Logradouro">
+            </div>
+            <div class="form-group col-sm-3 padding-hack">
+                <input type="number" class="form-control" placeholder="N°" min="0">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Bairro">
+            </div>
+            <div class="form-group col-sm-5 padding-hack disp-block">
+                <select class="form-control">
+                    <option value="" selected hidden>Estado</option>
+                    <option>Opção 1</option>
+                    <option>Opção 2</option>
+                    <option>Opção 3</option>
+                </select>
+            </div>
+            <div class="form-group col-sm-5 padding-hack disp-block">
+                <select class="form-control">
+                    <option value="" selected hidden>Cidade</option>
+                    <option>Opção 1</option>
+                    <option>Opção 2</option>
+                    <option>Opção 3</option>
+                </select>
+            </div>
+        </div>
+    </section>    
+    <script>
+        
+    </script>
+</body>
+</html>
