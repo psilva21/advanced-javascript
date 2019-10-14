@@ -68,8 +68,8 @@
         let event = document.createEvent('Event');
         $alert.style.display = 'none';
 
-        $cep.addEventListener('input', (e) => {
-            let text = e.currentTarget.value;
+        $cep.addEventListener('input', function () {
+            let text = this.value;
             if (text) {
                 if (/^[0-9]{5}-?[0-9]{3}$/g.test(text)) {
                     procuraCep(text).then(response => {
@@ -77,8 +77,6 @@
                             throw new Error('cep não encontrado');
 
                         let endereco = response;
-
-
                         let selectedUf = estados.filter(estado => {
                             return estado.sigla === endereco.uf;
                         })[0];
@@ -89,40 +87,40 @@
                             cidades = response;
 
                             cidades.forEach(city => {
-                                let option = document.createElement('option');
-                                option.value = city.id;
-                                option.textContent = city.nome;
-                                fragment.appendChild(option);
+                                fragment.appendChild(createOptionElement(city));
                             });
                             $cidade.appendChild(fragment);
+
+                            let selectedCity = cidades.filter(cidade => {
+                                return cidade.nome === endereco.localidade;
+                            })[0];
+
+                            $cidade.value = selectedCity.id;
+                        }).catch(error => {
+                            showMessage(error.message);
                         });
                         $bairro.value = endereco.bairro;
                         $logradouro.value = endereco.logradouro;
                     }).catch(error => {
-                        $alert.style.display = 'block';
-                        $alert.textContent = error.message;
+                        showMessage(error.message);
                     });
+                } else {
+                    showMessage('CEP inválido');
                 }
             } else if (!text && $alert.style.display !== 'none') {
-                $alert.style.display = 'none';
+                closeMessage();
             }
-
         });
-        $estados.addEventListener('change', (e) => {
-            let ufCode = e.currentTarget.value;
-            pegaCidadeEInsere(ufCode);
+        $estados.addEventListener('change', function () {
+            pegaCidadeEInsere(this.value);
         });
         pegaEstados().then(response => {
             //fragment to avoid manipulate the DOM much times
             let documento = new DocumentFragment();
             estados = response;
             estados.forEach(estado => {
-                let option = document.createElement('option');
-                option.value = estado.id;
-                option.text = estado.nome;
-                option.sigla = estado.sigla;
-                documento.appendChild(option);
-            })
+                documento.appendChild(createOptionElement(estado));
+            });
             $estados.appendChild(documento);
         });
         function pegaCidadeEInsere(uf) {
@@ -130,13 +128,26 @@
                 let fragment = new DocumentFragment();
                 cidades = response;
                 cidades.forEach(city => {
-                    let option = document.createElement('option');
-                    option.value = city.id;
-                    option.textContent = city.nome;
-                    fragment.appendChild(option);
+                    fragment.appendChild(createOptionElement(city));
                 });
                 $cidade.appendChild(fragment);
             });
+        }
+        function createOptionElement({ id, nome, sigla }) {
+            let option = document.createElement('option');
+            option.value = id;
+            option.text = nome;
+            if (sigla)
+                option.sigla = sigla;
+
+            return option;
+        }
+        function showMessage(message) {
+            $alert.textContent = message;
+            $alert.style.display = 'block';
+        }
+        function closeMessage() {
+            $alert.style.display = 'none';
         }
         async function procuraCep(cep) {
             const url = `http://viacep.com.br/ws/${cep}/json/`;
@@ -163,7 +174,6 @@
 
             if (!resposta.ok)
                 throw new Error('Erro interno ao carregar as cidades do estado' + uf);
-
 
             return resposta.json();
         }
