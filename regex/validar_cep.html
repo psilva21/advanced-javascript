@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Validar CEP</title>
+</head>
+<body>
+    <header>
+        <h2>Curso de Javascript avançado</h2>
+        <hr/>
+    </header>
+    <section>
+        <input type="text" name="email" placeholder="digite seu e-mail"/>
+        <input type="text" name="cpf" placeholder="xxx.xxx.xxx-xx"/>
+        <button>Enviar</button>
+    </section>
+    <script src="./beluga2.js"></script>
+    <script>
+        (function(){
+            var inputs = blg.$$('input');
+            var $email = inputs[0];
+            var $cpf = inputs[1];
+            var $btn = blg.$('button');
+
+            limparCampos();
+
+            $cpf.disabled = true;
+            $btn.disabled = true;
+
+
+            $email.addEventListener('input', function(evt){
+                let email = evt.currentTarget.value;
+                
+                if(email)
+                    $cpf.disabled = validarEmail(email)
+            });
+            $cpf.addEventListener('input', function(evt){
+                let cpf = evt.currentTarget.value;
+
+                if(cpf)
+                    $btn.disabled = validarCpf(cpf);
+                
+            });
+
+            function validarEmail(email){
+                let regex = /^[a-zA-Z]+\w*@\w+\.com(\.br)?$/g;
+                
+                return regex.test(email);
+            }
+            function validarCpf(cpf){
+                let regex = /^([\d]{3})\.?\1\.?\1-?\d{2}$/g;
+
+                return regex.test(cpf);
+            }
+            function limparCampos(){
+                $email.value = '';
+                $cpf.value = '';
+            }
+
+        })();
+    </script>
+</body>
+</html>
