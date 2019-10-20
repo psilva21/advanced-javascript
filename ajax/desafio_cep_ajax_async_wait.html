@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Desafio CEP</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        .centralized {
+            width: 50%;
+            margin: 50px auto;
+        }
+
+        .padding-hack {
+            padding: 0;
+        }
+
+        .disp-block {
+            clear: both;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="container">
+        <div class="centralized">
+            <div class="form-group">
+                <input type="text" class="form-control cepField" placeholder="Insira o cep">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control logradouroField" placeholder="Logradouro">
+            </div>
+            <div class="form-group col-sm-3 padding-hack">
+                <input type="number" class="form-control" placeholder="N°" min="0">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control bairroField" placeholder="Bairro">
+            </div>
+            <div class="form-group col-sm-5 padding-hack disp-block">
+                <select class="form-control estadosField">
+                    <option value="" selected hidden>Estado</option>
+                </select>
+            </div>
+            <div class="form-group col-sm-5 padding-hack disp-block">
+                <select class="form-control cidadeField">
+                    <option value="" selected hidden>Cidade</option>
+                </select>
+            </div>
+            <div class="alert alert-warning disp-block"></div>
+        </div>
+    </section>
+    <script src="./beluga2.js"></script>
+
+    <script>
+        let $cep = blg.$('.cepField');
+        let $bairro = blg.$('.bairroField');
+        let $logradouro = blg.$('.logradouroField');
+        let $cidade = blg.$('.cidadeField');
+        let $alert = blg.$('.alert');
+        let $estados = blg.$('.estadosField');
+
+        let estados = [];
+        let cidades = [];
+
+        let event = document.createEvent('Event');
+        $alert.style.display = 'none';
+
+        $cep.addEventListener('input', function () {
+            let text = this.value;
+            if (text) {
+                if (/^[0-9]{5}-?[0-9]{3}$/g.test(text)) {
+                    procuraCep(text).then(response => {
+                        if (response.erro)
+                            throw new Error('cep não encontrado');
+
+                        let endereco = response;
+                        let selectedUf = estados.filter(estado => {
+                            return estado.sigla === endereco.uf;
+                        })[0];
+                        $estados.value = selectedUf.id;
+
+                        pegaCidades(selectedUf.id).then(response => {
+                            let fragment = new DocumentFragment();
+                            cidades = response;
+
+                            cidades.forEach(city => {
+                                fragment.appendChild(createOptionElement(city));
+                            });
+                            $cidade.appendChild(fragment);
+
+                            let selectedCity = cidades.filter(cidade => {
+                                return cidade.nome === endereco.localidade;
+                            })[0];
+
+                            $cidade.value = selectedCity.id;
+                        }).catch(error => {
+                            showMessage(error.message);
+                        });
+                        $bairro.value = endereco.bairro;
+                        $logradouro.value = endereco.logradouro;
+                    }).catch(error => {
+                        showMessage(error.message);
+                    });
+                } else {
+                    showMessage('CEP inválido');
+                }
+            } else if (!text && $alert.style.display !== 'none') {
+                closeMessage();
+            }
+        });
+        $estados.addEventListener('change', function () {
+            pegaCidadeEInsere(this.value);
+        });
+        pegaEstados().then(response => {
+            //fragment to avoid manipulate the DOM much times
+            let documento = new DocumentFragment();
+            estados = response;
+            estados.forEach(estado => {
+                documento.appendChild(createOptionElement(estado));
+            });
+            $estados.appendChild(documento);
+        });
+        function pegaCidadeEInsere(uf) {
+            pegaCidades(uf).then(response => {
+                let fragment = new DocumentFragment();
+                cidades = response;
+                cidades.forEach(city => {
+                    fragment.appendChild(createOptionElement(city));
+                });
+                $cidade.appendChild(fragment);
+            });
+        }
+        function createOptionElement({ id, nome, sigla }) {
+            let option = document.createElement('option');
+            option.value = id;
+            option.text = nome;
+            if (sigla)
+                option.sigla = sigla;
+
+            return option;
+        }
+        function showMessage(message) {
+            $alert.textContent = message;
+            $alert.style.display = 'block';
+        }
+        function closeMessage() {
+            $alert.style.display = 'none';
+        }
+        async function procuraCep(cep) {
+            const url = `http://viacep.com.br/ws/${cep}/json/`;
+            let endereco = await fetch(url);
+
+            if (!endereco.ok)
+                throw new Error('Erro interno');
+
+            return endereco.json();
+        }
+
+        async function pegaEstados() {
+            const url = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
+            let resposta = await fetch(url);
+
+            if (!resposta.ok)
+                throw new Error('Erro interno ao carregar os estados');
+
+            return resposta.json();
+        }
+        async function pegaCidades(uf) {
+            const url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`;
+            let resposta = await fetch(url);
+
+            if (!resposta.ok)
+                throw new Error('Erro interno ao carregar as cidades do estado' + uf);
+
+            return resposta.json();
+        }
+    </script>
+</body>
+
+</html>
