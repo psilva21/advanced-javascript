@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Validar CEP</title>
+</head>
+<body>
+    <header>
+        <h2>Curso de Javascript avançado</h2>
+        <hr/>
+    </header>
+    <section></section>
+    <script src="./beluga2.js"></script>
+    <script>
+        (function(){
+            let texto =  'hoje é 20/10/2019 e amanhã será 21/10/2019. Não sei o que tem no dia 03/02 em 3/05 eu vou marcar uma consulta para 1/1/2020 e retornarei no dia 1/2/22';
+            let meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set',
+            'Out','Nov','Dez'];
+
+            console.log('Original',texto);
+            //replace returns a new string
+            let replaced = texto.replace(/(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/g,
+                function(matched, group1, group2, group3, idx, fullString){
+                    return group1 + ' de '+ meses[parseInt(group2)-1] + (group3 ? ' de '+ group3 : '');
+                })
+            console.log('nova string',replaced);
+            
+        })();
+    </script>
+</body>
+</html>
