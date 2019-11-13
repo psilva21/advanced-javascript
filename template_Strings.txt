@@ -1,0 +1,7 @@
+O objeto construtor do array não trabalha muito bem com números inteiros
+se passar como parâmetro, vai ser criado n arrays vazios
+
+
+
+array from cria um array a partir de outro array, pode ser usado com array like
+

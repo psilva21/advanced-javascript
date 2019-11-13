@@ -1,0 +1,45 @@
+tipos de testes
+
+
+testes de interface
+testes de integração de Apis
+testes de unidades
+
+
+Porque utilizar testes?
+ 
+qualidade de código
+segurança
+confiabilidade
+
+
+
+TDD - abordagem de teste unitário
+
+test fails -> test passes -> refactor
+
+
+primeiro escrever o teste antes de programar
+
+passos
+
+escrever o teste
+fazer o teste passar 
+e se necessário refatorar o código
+
+
+ferramentas
+
+mocha
+chai
+jasmine
+ava
+jest
+
+
+vantagens de utilizar ferramentas
+
+rodar testes sempre que um .js é alterado
+relatórios completos
+não depende do broswer
+testes assíncronos

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Template Strings e tagged templates</title>
+</head>
+<body>
+    <script>
+        const nome = 'Paulo';
+        const idade = 2;
+
+        var str = 'O '+nome+' possui '+idade+' anos';
+
+        console.log(str);
+
+        var str2 = `O ${nome} possui ${idade} anos`;
+        console.log(str2);
+        
+
+        function tratarIdade(strings, ...variaveis){
+            console.log(strings);
+            console.log(variaveis);
+            let idade = variaveis[1];
+            var _strings = [...strings];
+            if(idade === 1){
+                _strings[2] = ' ano';
+            }
+            var result = [];
+
+            _strings.forEach((str,i) => {
+                result.push(str);
+                if(variaveis[i] !== 'undefined'){
+                    result.push(variaveis[i]);
+                }
+            })
+            return result.join('');
+        }
+
+        var str3 = tratarIdade`O ${nome} possui ${idade} anos`;
+        console.log(str3);
+        
+    </script>
+</body>
+</html>
